@@ -9,7 +9,7 @@
 :ufw-after-forward - [0:0]
 # End required lines
 
-# don't log noisy broadcast
+# Don't log noisy broadcast
 -A ufw-after-input -m addrtype --dst-type BROADCAST -j ufw-skip-to-policy-input
 
 :ufw-user-forward - [0:0]
@@ -26,7 +26,7 @@
 -A DOCKER-USER -j RETURN -p tcp --dport 80
 -A DOCKER-USER -j RETURN -p tcp --dport 3000
 
-# DENY OUTGOING TRAFFIC FROM ANY NETWORK
+# DENY INCOMING TRAFFIC FROM ANY NETWORK
 -A DOCKER-USER -j DROP -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 0.0.0.0/0
 
 -A DOCKER-USER -j RETURN
