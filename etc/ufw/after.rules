@@ -31,5 +31,5 @@
 
 -A DOCKER-USER -j RETURN
 
-# don't delete the 'COMMIT' line or these rules won't be processed
+# Don't delete the 'COMMIT' line
 COMMIT
