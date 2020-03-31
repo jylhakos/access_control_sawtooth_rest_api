@@ -26,11 +26,11 @@ Read procedures how to set up [Hyperledger Sawtooth using Docker](https://sawtoo
 
 ### Step-by-Step
 
-Step 1. Docker Engine and Docker Compose
+*Step 1. Docker Engine and Docker Compose*
 
 Install the latest versions of Docker Engine and Docker Compose on Ubuntu.
 
-Step 2. Docker containers
+*Step 2. Docker Containers*
 
 Build Docker image and start Docker container for the Hyperledger Sawtooth's REST API.
 
@@ -44,7 +44,7 @@ The Supply Chain application runs on top of Hyperledger Sawtooth. Follow the Sup
 
 Hyperledger Sawtooth's blockchain REST API will be available at http://localhost:8024
 
-Step 3. Reverse Proxy
+*Step 3. Reverse Proxy*
 
 The reverse proxy provides a single point of authentication and handles incoming HTTPS connections, decrypting the requests and passing unencrypted HTTP requests on to Hyperledger Sawtooth's REST API.
 
@@ -127,13 +127,27 @@ Query the reverse proxy with SSL authorization by curl command or browser's loca
 
 `https://localhost/sawtooth/blocks`
   
-Step 4. Filtering Packets
+*Step 4. The iptables rules*
 
-Access control refers to way of controlling access to Hyperledger Sawtooth's REST API by firewall. 
+Access control is a way to control access to Hyperledger Sawtooth's REST API. 
 
-The iptables is userspace interface to manage packet filtering and port filtering. Uncomplicated firewall (ufw) is way to add or remove rules to the [iptables](https://docs.docker.com/network/iptables/).
+The iptables is an userspace interface to manage packet filtering and port filtering. 
 
-Docker container allows the public network to access the services provided by the Docker. To be able to reach Docker container from the public network, you have to publish its [port(s)](https://docs.docker.com/config/containers/container-networking/) to the host network. To restrict connections to the Docker host, insert iptables rules at the top of the DOCKER-USER chain. Rules can be added by denoting the port number to allow or to deny traffic on the port. The rules are processed in the order of the file top to bottom. To add to alter default rules edit /etc/ufw/after.rule file. RETURN rule causes the packet to stop traveling through DOCKER-USER chain. Add DROP rule to /etc/ufw/after.rule file to restrict connections from public network. 
+Uncomplicated firewall (ufw) is way to add or remove rules to the [iptables](https://docs.docker.com/network/iptables/).
+
+Docker container allows the public network to access the services provided by the Docker. 
+
+To be able to reach Docker container from the public network, you have to publish its [port(s)](https://docs.docker.com/config/containers/container-networking/) to the host network. 
+
+To restrict connections to the Docker host, insert iptables rules at the top of the DOCKER-USER chain. 
+
+Rules can be added by denoting the port number to allow or to deny traffic on the port. 
+
+The rules are processed in the order of the file top to bottom. 
+
+Edit /etc/ufw/after.rule file to alter default rules for the iptables.
+
+Configure /etc/ufw/after.rule file to allow the packets to traverse through DOCKER-USER chain by RETURN rule or restrict incoming packets from a public network by DROP rule.
 
 ### References
 
