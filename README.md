@@ -46,8 +46,6 @@ Step 3. Reverse Proxy
 
 The reverse proxy provides a single point of authentication and handles incoming HTTPS connections, decrypting the requests and passing unencrypted HTTP requests on to Hyperledger Sawtooth's REST API.
 
-Hyperledger Sawtooth's REST API builds a link using types of “X-Forwarded” headers X-Forwarded-Host, X-Forwarded-Proto and X-Forwarded-Path for HTTP requests. X-Forwarded-Path is necessary if the reverse proxy endpoints do not map directly to the REST API endpoints.
-
 Install [Apache](https://httpd.apache.org/docs/2.4/) and enable the required modules. 
 
 ```
@@ -120,7 +118,9 @@ Add the following contents to 000-default.conf file.
 		RequestHeader set X-Forwarded-Path "/sawtooth"
 	    </Location>
 	</VirtualHost>`
-  
+
+Hyperledger Sawtooth's REST API builds a link using types of “X-Forwarded” headers X-Forwarded-Host, X-Forwarded-Proto and X-Forwarded-Path for HTTP requests. X-Forwarded-Path is necessary if the reverse proxy endpoints do not map directly to the REST API endpoints.
+
 Query the reverse proxy with SSL authorization by curl command or browser's location bar.
 
 `https://localhost/sawtooth/blocks`
