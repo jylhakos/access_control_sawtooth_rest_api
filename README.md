@@ -126,7 +126,9 @@ Hyperledger Sawtooth's REST API builds a link using types of “X-Forwarded” h
 Query the reverse proxy with SSL authorization by curl command or browser's location bar.
 
 `https://localhost/sawtooth/blocks`
-  
+
+Apache listens on the ports determined in /etc/apache2/ports.conf file.
+
 *Step 4. The rules of iptables*
 
 Access control is a way to control access to Hyperledger Sawtooth's REST API. 
