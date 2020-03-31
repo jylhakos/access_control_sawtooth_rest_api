@@ -4,7 +4,7 @@
 
 ### Overview
 
-Hyperledger Sawtooth's REST API does not support authorization, but it is possible to control using a reverse proxy and firewall the requests sent to REST API. 
+Using a reverse proxy Hyperledger Sawtooth can support authorization and allow cross-origin access (CORS) to the REST API. The role of firewall is to filter and limit access to Hyperledger Sawtooth's REST API commands.
 
 Each Docker network is associated with a bridge interface on the Ubuntu host, and Linux firewall rules are defined to filter traffic between these interfaces.
 
@@ -30,9 +30,9 @@ Set up Sawtooth node to fetch information from the blockchain. The Sawtooth clie
 
 Download or clone Hyperledger Sawtooth's blockchain project for [Supply Chain](https://github.com/hyperledger/sawtooth-supply-chain).
 
-Follow the Supply Chain instructions to run supply-rest-api server on Ubuntu.
+Follow the Supply Chain instructions to run Docker container on Ubuntu.
 
-`$ sudo -u sawtooth sawtooth-rest-api -vvv`
+`$ docker start supply-rest-api`
 
 Hyperledger Sawtooth's blockchain REST API will be available at http://localhost:8024
 
