@@ -4,15 +4,17 @@
 
 ### Overview
 
-Using a reverse proxy Hyperledger Sawtooth can support authorization and allow cross-origin access (CORS) to the REST API. 
+Using a reverse proxy Hyperledger Sawtooth supports authorization and allows Cross-Origin Resource Sharing (CORS) to access from a different domain to Hyperledger Sawtooth's REST API. 
 
-The role of firewall is to filter and limit access to Hyperledger Sawtooth's REST API commands.
+The role of firewall is to filter and limit access to Hyperledger Sawtooth's REST API.
+
+Docker is an easy way to get Hyperledger Sawtooth up and running REST API. Instead of forwarding the requests directly to the Docker container, the reverse proxy is listening for incoming HTTPS requests and forward them to Hyperledger Sawtooth's REST API.
 
 Each Docker network is associated with a bridge interface on the Ubuntu host, and Linux firewall rules are defined to filter traffic between these interfaces.
 
 By default, the Docker daemon listens for connections on a socket to accept requests sent from Hyperledger Sawtooths' clients to [Hyperledger Sawtooth's REST API](https://sawtooth.hyperledger.org/docs/core/releases/latest/rest_api/endpoint_specs.html) endpoint.
 
-The reverse proxy server takes requests from a Sawtooth client and forwards these requests to Hyperledger Sawtooth's REST API server. 
+The reverse proxy server takes requests froriginom a Sawtooth client and forwards these requests to Hyperledger Sawtooth's REST API. 
 
 The following are steps how to install, configure, and run Apache Reverse Proxy and Linux Firewall to control access to Hyperledger Sawtooth's REST API.
 
@@ -128,6 +130,9 @@ Query the reverse proxy with SSL authorization by curl command or browser's loca
 Step 4. Filtering Packets
 
 Access control refers to way of controlling access to Hyperledger Sawtooth's REST API by firewall.
+
+Docker container allows the public network to access the services provided by the Docker, because Docker updates iptables to bind a Docker container's port to the host, thus opening the port for public access. Docker installs a custom iptables chain named DOCKER-USER
+
 
 ### References
 
