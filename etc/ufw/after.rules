@@ -1,0 +1,35 @@
+#
+# $ sudo ufw reload
+#
+
+# Don't delete these required lines, otherwise there will be errors
+*filter
+:ufw-after-input - [0:0]
+:ufw-after-output - [0:0]
+:ufw-after-forward - [0:0]
+# End required lines
+
+# don't log noisy broadcast
+-A ufw-after-input -m addrtype --dst-type BROADCAST -j ufw-skip-to-policy-input
+
+:ufw-user-forward - [0:0]
+
+:DOCKER-USER - [0:0]
+
+# DNS
+-A DOCKER-USER -p udp -m udp --sport 53 --dport 1024:65535 -j RETURN
+
+-A DOCKER-USER -j ufw-user-forward
+
+# ALLOW ALL TRAFFIC TO PORT
+-A DOCKER-USER -j RETURN -p tcp --dport 8022
+-A DOCKER-USER -j RETURN -p tcp --dport 80
+-A DOCKER-USER -j RETURN -p tcp --dport 3000
+
+# DENY OUTGOING TRAFFIC FROM ANY NETWORK
+-A DOCKER-USER -j DROP -p tcp -m tcp --tcp-flags FIN,SYN,RST,ACK SYN -d 0.0.0.0/0
+
+-A DOCKER-USER -j RETURN
+
+# don't delete the 'COMMIT' line or these rules won't be processed
+COMMIT

@@ -1,0 +1,22 @@
+
+version: '2.1'
+
+networks:
+    supply-chain:
+
+services:
+
+  rest-api:
+    image: hyperledger/sawtooth-rest-api:1.0
+    container_name: supply-rest-api
+    ports:
+      - '8024:8008'
+     #- '127.0.0.1:8024:8008'
+    depends_on:
+      - validator
+    entrypoint: |
+      sawtooth-rest-api -vv
+        --connect tcp://validator:4004
+        --bind rest-api:8008
+    networks:
+      - supply-chain
