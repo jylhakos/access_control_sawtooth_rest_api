@@ -127,7 +127,7 @@ Query the reverse proxy with SSL authorization by curl command or browser's loca
 
 `https://localhost/sawtooth/blocks`
   
-*Step 4. The iptables rules*
+*Step 4. The rules of iptables*
 
 Access control is a way to control access to Hyperledger Sawtooth's REST API. 
 
