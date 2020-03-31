@@ -129,10 +129,11 @@ Query the reverse proxy with SSL authorization by curl command or browser's loca
   
 Step 4. Filtering Packets
 
-Access control refers to way of controlling access to Hyperledger Sawtooth's REST API by firewall.
+Access control refers to way of controlling access to Hyperledger Sawtooth's REST API by firewall. 
 
-Docker container allows the public network to access the services provided by the Docker, because Docker updates iptables to bind a Docker container's port to the host, thus opening the port for public access. Docker installs a custom iptables chain named DOCKER-USER
+The iptables is userspace interface to manage packet filtering and port filtering. Uncomplicated firewall (ufw) is way to add or remove rules to the [iptables](https://docs.docker.com/network/iptables/).
 
+Docker container allows the public network to access the services provided by the Docker. To be able to reach Docker container from the public network, you have to publish its [port(s)](https://docs.docker.com/config/containers/container-networking/) to the host network. To restrict connections to the Docker host, insert iptables rules at the top of the DOCKER-USER chain. Rules can be added by denoting the port number to allow or to deny traffic on the port. The rules are processed in the order of the file top to bottom. To add to alter default rules edit /etc/ufw/after.rule file. RETURN rule causes the packet to stop traveling through DOCKER-USER chain. Add DROP rule to /etc/ufw/after.rule file to restrict connections from public network. 
 
 ### References
 
