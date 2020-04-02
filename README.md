@@ -157,7 +157,8 @@ The configuration file default.conf in Nginx uses proxy_pass directive to pass r
 
 By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Nginx's configuration file needs to include the resolver directive to explicitly specify the DNS to resolve hostnames.
 
-```server {
+```
+server {
 	listen 443 ssl http2;
 	server_name reverse_proxy;
 	ssl_certificate /etc/ssl/certs/nginx/site.crt;
@@ -171,7 +172,8 @@ By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Ng
 	}
 	access_log off;
 	error_log  /var/log/nginx/error.log error;
-}```
+}
+```
 
 
 ### References
