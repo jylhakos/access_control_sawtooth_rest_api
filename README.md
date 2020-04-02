@@ -1,6 +1,6 @@
 # How to control access to Hyperledger Sawtooth's REST API
 
-*Keywords: Linux, Ubuntu, Docker, Docker-Compose, Apache, Reverse Proxy, HTTP, HTTPS, SSL, Uncomplicated Firewall, Hyperledger Sawtooth, REST API.*
+*Keywords: Linux, Ubuntu, Docker, Docker-Compose, Apache, Nginx, Reverse Proxy, HTTP, HTTPS, SSL, Uncomplicated Firewall, Hyperledger Sawtooth, REST API.*
 
 ### Overview
 
@@ -14,9 +14,9 @@ Each Docker network is associated with a bridge interface on the Ubuntu host, an
 
 By default, the Docker daemon listens for connections on a socket to accept requests sent from Hyperledger Sawtooths' clients to [Hyperledger Sawtooth's REST API](https://sawtooth.hyperledger.org/docs/core/releases/latest/rest_api/endpoint_specs.html) endpoint.
 
-The reverse proxy server takes requests froriginom a Sawtooth client and forwards these requests to Hyperledger Sawtooth's REST API. 
+The reverse proxy server receives GET requests from a Sawtooth client and forwards those GET requests to Hyperledger Sawtooth's REST API. 
 
-The following are steps how to install, configure, and run Apache Reverse Proxy and Linux Firewall to control access to Hyperledger Sawtooth's REST API.
+The following are major steps how to install, configure, and run either Apache or Nginx as Reverse Proxy and Linux Firewall to control access to Hyperledger Sawtooth's REST API.
 
 ### Prerequisites
 
@@ -150,6 +150,29 @@ The rules are processed in the order of the file top to bottom.
 Edit /etc/ufw/after.rule file to alter default rules for the iptables.
 
 Configure /etc/ufw/after.rule file to allow the packets to traverse through DOCKER-USER chain by RETURN rule or restrict incoming packets from a public network by DROP rule.
+
+### Optional - Nginx
+
+The default configuration in default.conf file tells Nginx to pass all requests to the /sawtooth/blocks location using the proxy_pass directive to http://DOCKER-CONTAINER-NAME:8008/blocks URL.
+
+By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Nginx's configuration file needs to include the resolver directive to explicitly specify the DNS to resolve hostnames.
+
+`server {
+	listen 443 ssl http2;
+	server_name reverse_proxy;
+	ssl_certificate /etc/ssl/certs/nginx/site.crt;
+	ssl_certificate_key /etc/ssl/certs/nginx/site.key;
+	include /etc/nginx/includes/ssl.conf;
+	resolver 127.0.0.11 valid=30s;
+	location /sawtooth/blocks {
+		include /etc/nginx/includes/proxy.conf;
+		set $target supply-rest-api:8008/blocks;
+		proxy_pass http://$target;
+	}
+	access_log off;
+	error_log  /var/log/nginx/error.log error;
+}`
+
 
 ### References
 
