@@ -4,25 +4,25 @@
 
 ### Overview
 
-Using a reverse proxy Hyperledger Sawtooth supports authorization and allows Cross-Origin Resource Sharing (CORS) to access from a different domain to Hyperledger Sawtooth's REST API. 
+Using a Reverse Proxy Hyperledger Sawtooth supports Authorization and allows Cross-Origin Resource Sharing (CORS) to access from a different domain to Hyperledger Sawtooth's REST API.
 
 The role of firewall is to filter and limit access to Hyperledger Sawtooth's REST API.
 
-Docker is an easy way to get Hyperledger Sawtooth up and running REST API. Instead of forwarding the requests directly to the Docker container, the reverse proxy is listening for incoming HTTPS requests and forward them to Hyperledger Sawtooth's REST API.
+Docker is an easy way to get Hyperledger Sawtooth up and running REST API. Instead of forwarding the requests directly to the Docker container, the Reverse Proxy is listening for incoming HTTPS requests and forward them to Hyperledger Sawtooth's REST API.
 
-Each Docker network is associated with a bridge interface on the Ubuntu host, and Linux firewall rules are defined to filter traffic between these interfaces.
+Each Docker network is associated with a bridge interface on the Ubuntu host and Linux Firewall rules are defined to filter or deny traffic between these interfaces.
 
-By default, the Docker daemon listens for connections on a socket to accept requests sent from Hyperledger Sawtooths' clients to [Hyperledger Sawtooth's REST API](https://sawtooth.hyperledger.org/docs/core/releases/latest/rest_api/endpoint_specs.html) endpoint.
+By default, the Docker daemon listens for connections on a socket to accept HTTP requests sent from Hyperledger Sawtooths' clients to [Hyperledger Sawtooth's REST API](https://sawtooth.hyperledger.org/docs/core/releases/latest/rest_api/endpoint_specs.html) endpoint.
 
-The reverse proxy server receives GET requests from a Sawtooth client and forwards those GET requests to Hyperledger Sawtooth's REST API. 
+The Reverse Proxy receives HTTP requests from a Sawtooth client and forwards HTTP requests to Hyperledger Sawtooth's REST API. 
 
 The following are major steps how to install, configure, and run either Apache or Nginx as Reverse Proxy and Linux Firewall to control access to Hyperledger Sawtooth's REST API.
 
 ### Prerequisites
 
-The configuration uses [Docker Engine](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [Docker Compose](https://docs.docker.com/compose/install/) to run Hyperledger Sawtooth's REST API Server on Ubuntu.
+The environment uses [Docker Engine](https://docs.docker.com/install/linux/docker-ce/ubuntu/) and [Docker Compose](https://docs.docker.com/compose/install/) to run Hyperledger Sawtooth's REST API Server on Ubuntu.
 
-Read procedures how to set up [Hyperledger Sawtooth using Docker](https://sawtooth.hyperledger.org/docs/core/releases/latest/app_developers_guide/docker.html) for a Sawtooth Node.
+Read procedures to know how to set up [Hyperledger Sawtooth using Docker](https://sawtooth.hyperledger.org/docs/core/releases/latest/app_developers_guide/docker.html) for a Sawtooth Node.
 
 ### Step-by-Step
 
@@ -38,7 +38,7 @@ Set up Sawtooth node to fetch information from the blockchain. The Sawtooth clie
 
 Download or clone Hyperledger Sawtooth's blockchain project for [Supply Chain](https://github.com/hyperledger/sawtooth-supply-chain). The Docker Compose's yaml file contains details about services, networks, and volumes for setting up the Hyperledger Sawtooth's REST API.
 
-The Supply Chain application runs on top of Hyperledger Sawtooth. Follow the Supply Chain instructions to create Docker containers for Hyperledger Sawtooth's REST API. From the project directory, start up Docker containers by running docker-compose up command.
+The project is an example blockchain application for Supply Chain using Hyperledger Sawtooth's REST API. Follow the Supply Chain instructions to create Docker containers for Hyperledger Sawtooth's REST API. From the project directory, start up Docker containers by running docker-compose up command.
 
 `$ docker start supply-rest-api`
 
@@ -46,7 +46,7 @@ Hyperledger Sawtooth's blockchain REST API will be available at http://localhost
 
 *Step 3. Reverse Proxy*
 
-The reverse proxy provides a single point of authentication and handles incoming HTTPS connections, decrypting the requests and passing unencrypted HTTP requests on to Hyperledger Sawtooth's REST API.
+The Reverse Proxy provides a single point of Authentication and it handles incoming HTTPS connections, decrypting the requests and passing unencrypted HTTP requests on to Hyperledger Sawtooth's REST API.
 
 Install [Apache](https://httpd.apache.org/docs/2.4/) and enable the required modules. 
 
@@ -121,7 +121,7 @@ Add the following contents to 000-default.conf file.
 	    </Location>
 	</VirtualHost>`
 
-Hyperledger Sawtooth's REST API builds a link using types of “X-Forwarded” headers X-Forwarded-Host, X-Forwarded-Proto and X-Forwarded-Path for HTTP requests. X-Forwarded-Path is necessary if the reverse proxy endpoints do not map directly to the REST API endpoints.
+Hyperledger Sawtooth's REST API builds a link using types of “X-Forwarded” headers X-Forwarded-Host, X-Forwarded-Proto and X-Forwarded-Path for HTTP requests. To put X-Forwarded-Path is necessary if the Reverse Proxy endpoints do not map directly to the REST API endpoints.
 
 Query the reverse proxy with SSL authorization by curl command or browser's location bar.
 
@@ -153,11 +153,11 @@ Configure /etc/ufw/after.rule file to allow the packets to traverse through DOCK
 
 ### Optional - Nginx
 
-The default configuration in default.conf file tells Nginx to pass all requests to the /sawtooth/blocks location using the proxy_pass directive to http://DOCKER-CONTAINER-NAME:8008/blocks URL.
+The configuration file default.conf in Nginx uses proxy_pass directive to pass requests to the location /sawtooth/blocks to Docker container's URL.
 
 By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Nginx's configuration file needs to include the resolver directive to explicitly specify the DNS to resolve hostnames.
 
-`server {
+```server {
 	listen 443 ssl http2;
 	server_name reverse_proxy;
 	ssl_certificate /etc/ssl/certs/nginx/site.crt;
@@ -171,7 +171,7 @@ By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Ng
 	}
 	access_log off;
 	error_log  /var/log/nginx/error.log error;
-}`
+}```
 
 
 ### References
