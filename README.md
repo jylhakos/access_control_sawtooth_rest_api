@@ -162,7 +162,7 @@ Configure default.conf file to specify proxy_pass directive with Docker containe
 
 To [configure Nginx to use HTTPS](https://nginx.org/en/docs/http/configuring_https_servers.html) protocol, the SSL parameter must be enabled on listening sockets in the server block, and the locations of the SSL certificate and private key files need to be specified in default.conf file.
 
-Nginx can [restrict access](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/) to the location of proxy_pass directive by implementing username and password Authentication.
+Nginx can [restrict access](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/) to the location assigned with proxy_pass directive by implementing Authentication.
 
 Install apache2-utils package with the following command.
 
