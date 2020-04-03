@@ -80,6 +80,7 @@ $ sudo openssl req -x509 -nodes -days 7300 -newkey rsa:2048 \
   -keyout /tmp/.ssl.key \
   -out /tmp/.ssl.crt
 ```
+Secure Socket Layer (SSL) is used to encrypt network transactions. 
 
 Copy SSL certificate and keys to /etc/apache2/keys directory.
 
@@ -153,13 +154,25 @@ Configure /etc/ufw/after.rule file to allow the packets to traverse through DOCK
 
 ### Optional - Nginx
 
-The configuration file default.conf in Nginx uses proxy_pass directive to pass requests to the location /sawtooth/blocks to Docker container's URL.
+To pass a HTTPS request to Hyperledger Sawtooth's REST API, the [proxy_pass directive](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) is specified inside a location block. 
 
-By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Nginx's configuration file needs to include the resolver directive to explicitly specify the DNS to resolve hostnames.
+Configure default.conf file to specify proxy_pass directive with Docker container's name in the location /sawtooth/blocks block.
+
+To [configure Nginx to use HTTPS](https://nginx.org/en/docs/http/configuring_https_servers.html) protocol, the SSL parameter must be enabled on listening sockets in the server block, and the locations of the SSL certificate and private key files need to be specified in default.conf file.
+
+Nginx can [restrict access](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/) to the location of proxy_pass directive by implementing username and password Authentication.
+
+Generate a signed certificate using OpenSSL or Apache2 utilities.
+
+`$ sudo htpasswd -c etc/nginx/.htpasswd sawtooth`
+
+Inside the location block to be protected, specify auth_basic directive and auth_basic_user_file directive with a path to the htpasswd file.
+
+By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Nginx's configuration file needs to include the [resolver directive](https://nginx.org/en/docs/http/ngx_http_upstream_module.html#resolver) to explicitly specify the DNS to resolve hostnames.
 
 ```
 server {
-	listen 443 ssl http2;
+	listen 443 ssl http2; 
 	server_name reverse_proxy;
 	ssl_certificate /etc/ssl/certs/nginx/site.crt;
 	ssl_certificate_key /etc/ssl/certs/nginx/site.key;
@@ -167,6 +180,8 @@ server {
 	resolver 127.0.0.11 valid=30s;
 	location /sawtooth/blocks {
 		include /etc/nginx/includes/proxy.conf;
+		auth_basic "Restricted Content";
+        	auth_basic_user_file /etc/nginx/htpasswd;
 		set $target supply-rest-api:8008/blocks;
 		proxy_pass http://$target;
 	}
@@ -174,7 +189,6 @@ server {
 	error_log  /var/log/nginx/error.log error;
 }
 ```
-
 
 ### References
 
