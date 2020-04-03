@@ -154,7 +154,7 @@ Configure /etc/ufw/after.rule file to allow the packets to traverse through DOCK
 
 ### Optional - Nginx
 
-To pass a HTTPS request to Hyperledger Sawtooth's REST API, the [proxy_pass directive](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) is specified inside a location block. 
+To pass a HTTPS request to Hyperledger Sawtooth's REST API, the [proxy_pass directive](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) is specified inside a location. 
 
 Configure default.conf file to specify proxy_pass directive with Docker container's name in the location /sawtooth/blocks block.
 
@@ -166,7 +166,7 @@ Generate a signed certificate using OpenSSL or Apache2 utilities.
 
 `$ sudo htpasswd -c etc/nginx/.htpasswd sawtooth`
 
-Inside the location block to be protected, specify auth_basic directive and auth_basic_user_file directive with a path to the htpasswd file.
+Inside the location block to be protected, specify auth_basic directive and auth_basic_user_file directive with a path to the password file.
 
 By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Nginx's configuration file needs to include the [resolver directive](https://nginx.org/en/docs/http/ngx_http_upstream_module.html#resolver) to explicitly specify the DNS to resolve hostnames.
 
