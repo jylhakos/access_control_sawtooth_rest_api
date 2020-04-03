@@ -11,3 +11,6 @@ COPY ./includes/ /etc/nginx/includes/
 
 # Reverse Proxy SSL certificates
 COPY ./ssl/ /etc/ssl/certs/nginx/
+
+# Copy password file to folder in Docker container
+COPY ./etc/nginx/htpasswd /etc/nginx/
