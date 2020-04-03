@@ -172,9 +172,9 @@ Generate a signed certificate using apache2-utils command.
 
 `$ sudo htpasswd -c etc/nginx/.htpasswd sawtooth`
 
-Inside the location block to be protected, specify auth_basic directive and auth_basic_user_file directive with a path to the password file.
+Specify in the location block auth_basic directive for authentication and auth_basic_user_file directive with a path to the password file.
 
-By default, Docker reads container’s file /etc/resolv.conf to use a DNS and Nginx's configuration file needs to include the [resolver directive](https://nginx.org/en/docs/http/ngx_http_upstream_module.html#resolver) to explicitly specify the DNS to resolve hostnames.
+By default, Docker reads container’s file /etc/resolv.conf to use a DNS, therefore Nginx's configuration file includes the [resolver directive](https://nginx.org/en/docs/http/ngx_http_upstream_module.html#resolver) to explicitly specify the DNS to resolve hostnames.
 
 ```
 server {
