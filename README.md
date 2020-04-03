@@ -154,7 +154,9 @@ Configure /etc/ufw/after.rule file to allow the packets to traverse through DOCK
 
 ### Optional - Nginx
 
-To pass a HTTPS request to Hyperledger Sawtooth's REST API, the [proxy_pass directive](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) is specified inside a location. 
+Nginx is an open source Reverse Proxy server for HTTP and HTTPS protocols.
+
+To pass HTTPS requests to Hyperledger Sawtooth's REST API, the [proxy_pass directive](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/) is specified inside a location. 
 
 Configure default.conf file to specify proxy_pass directive with Docker container's name in the location /sawtooth/blocks block.
 
@@ -162,7 +164,11 @@ To [configure Nginx to use HTTPS](https://nginx.org/en/docs/http/configuring_htt
 
 Nginx can [restrict access](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/) to the location of proxy_pass directive by implementing username and password Authentication.
 
-Generate a signed certificate using OpenSSL or Apache2 utilities.
+Install apache2-utils package with the following command.
+
+`$ sudo apt-get install apache2-utils`
+
+Generate a signed certificate using apache2-utils command.
 
 `$ sudo htpasswd -c etc/nginx/.htpasswd sawtooth`
 
@@ -189,6 +195,8 @@ server {
 	error_log  /var/log/nginx/error.log error;
 }
 ```
+
+Create Dockerfile and build Docker container with Nginx image using docker-compose build coommand, and then start Docker container's Nginx by running docker-compose up command.
 
 ### References
 
