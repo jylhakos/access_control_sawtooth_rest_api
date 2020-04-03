@@ -196,7 +196,7 @@ server {
 }
 ```
 
-Create Dockerfile and build Docker container with Nginx image using docker-compose build coommand, and then start Docker container's Nginx by running docker-compose up command.
+Create Dockerfile and build Docker container with Nginx image using docker-compose build command, and then start Docker container's Nginx by running docker-compose up command.
 
 ### References
 
