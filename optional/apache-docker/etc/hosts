@@ -1,0 +1,5 @@
+# docker inspect { CONTAINER NAME } | grep IPAddress
+
+127.0.0.1	localhost
+
+#172.20.0.6	rest-api
