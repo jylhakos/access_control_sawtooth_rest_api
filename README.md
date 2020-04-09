@@ -70,6 +70,10 @@ Create a password file for the user of sawtooth and repeat htpasswd command to g
 
 Generate SSL certificate, public and private keys to make requests to Hyperledger Sawtooth's REST API.
 
+Install apache2-utils package with the following command.
+
+`$ sudo apt-get install apache2-utils`
+
 The openssl command generates an error if .rnd file does not already exist in the user's directory.
 
 ```
@@ -89,7 +93,6 @@ $ cp /tmp/.ssl.crt /etc/apache2/keys/.
 
 $ cp /tmp/.ssl.key /etc/apache2/keys/.
 ```
-
 Create an Apache configuration file for Reverse Proxy.
 
 `$ sudo vi /etc/apache2/sites-available/000-default.conf`
@@ -152,7 +155,94 @@ Edit /etc/ufw/after.rule file to alter default rules for the iptables.
 
 Configure /etc/ufw/after.rule file to allow the packets to traverse through DOCKER-USER chain by RETURN rule or restrict incoming packets from a public network by DROP rule.
 
-### Optional - Nginx
+### Apache deployed on Docker (Optional)
+
+Apache httpd image can be deployed on Docker Container to authenticate blockchain users connected to Sawtooth's REST API services.
+
+Configure host [volumes](https://docs.docker.com/storage/volumes/) to map SSL certificate and private keys to /usr/local/apache2/conf/ in the docker-compose.yaml file.
+
+```
+version: '3.0'
+
+volumes:
+  config:
+
+networks:
+  supply-chain-network:
+    external:
+      name: supply-chain-network
+
+services:
+
+  rest-api:
+      image: hyperledger/sawtooth-rest-api:1.0
+      container_name: supply-rest-api
+      hostname: rest-api
+      expose:
+        - 8008
+      depends_on:
+        - validator
+      entrypoint: |
+        sawtooth-rest-api -vv
+        --connect tcp://validator:4004
+        --bind rest-api:8008
+      networks:
+        - supply-chain-network
+
+  apache-proxy:
+    image: "httpd:2.4"
+    container_name: apache-proxy
+    hostname: apache-proxy
+    volumes:
+      - "./config:/usr/local/apache2/conf/"
+    ports:
+    - 443:443
+    networks:
+      - supply-chain-network
+```
+
+Configure Apache and Virtual Hosts in /usr/local/apache2/conf/httpd.conf file.
+
+```
+<VirtualHost *:443>
+	ServerName localhost:443
+	ServerAdmin demo@DEMO
+	DocumentRoot /var/www/html
+	SSLEngine on
+	SSLCertificateFile /usr/local/apache2/conf/ssl.crt
+	SSLCertificateKeyFile /usr/local/apache2/conf/ssl.key
+	RequestHeader set X-Forwarded-Proto	"https"
+	ProxyPass /error/ !
+	<Location /sawtooth/blocks>
+		Options Indexes FollowSymLinks
+		AllowOverride None
+		AuthType Basic
+		AuthName "Enter password"
+        AuthUserFile "/usr/local/apache2/conf/htpassword"
+		Require user sawtooth
+		Require all denied
+		ProxyPass http://rest-api:8008/blocks
+		ProxyPassReverse http://rest-api:8008/blocks
+		RequestHeader set X-Forwarded-Path "/sawtooth/blocks"
+	</Location>
+</VirtualHost>
+```
+
+Configure a hostname for the service to connect dependent Docker containers on Docker network.
+
+If Docker version is earlier than 3.0, then Docker container's IP address is associated to hosts file /etc/hosts after running Docker container.
+
+Docker inspect provides detailed information on IP addresses of all Docker Containers.
+
+` $ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)`
+
+Docker downloads Apache httpd image as part of the build. 
+
+Start Docker container by [Docker Compose](https://docs.docker.com/compose/) command.
+
+`$ docker-compose up -d`
+
+### Dockerized Nginx (Optional)
 
 Nginx is an open source Reverse Proxy server for HTTP and HTTPS protocols.
 
@@ -163,10 +253,6 @@ Configure default.conf file to specify proxy_pass directive with Docker containe
 To [configure Nginx to use HTTPS](https://nginx.org/en/docs/http/configuring_https_servers.html) protocol, the SSL parameter must be enabled on listening sockets in the server block, and the locations of the SSL certificate and private key files need to be specified in default.conf file.
 
 Nginx can [restrict access](https://docs.nginx.com/nginx/admin-guide/security-controls/configuring-http-basic-authentication/) to the location assigned with proxy_pass directive by implementing Authentication.
-
-Install apache2-utils package with the following command.
-
-`$ sudo apt-get install apache2-utils`
 
 Generate a signed certificate using apache2-utils command.
 
@@ -196,7 +282,43 @@ server {
 }
 ```
 
-Create Dockerfile and build Docker container with Nginx image using docker-compose build command, and then start Docker container's Nginx by running docker-compose up command.
+Docker Compose uses a YAML file to configure Nginx’s services. 
+
+```
+version: '2.1'
+
+networks:
+  supply-chain-network:
+    external:
+      name: supply-chain-network
+
+services:
+  rest-api:
+    image: hyperledger/sawtooth-rest-api:1.0
+    container_name: supply-rest-api
+    expose:
+      - 8008
+    depends_on:
+      - validator
+    entrypoint: |
+      sawtooth-rest-api -vv
+        --connect tcp://validator:4004
+        --bind rest-api:8008
+    networks:
+      - supply-chain-network
+
+  nginx-proxy:
+    image: nginx-proxy
+    container_name: nginx-proxy
+    networks:
+      - supply-chain-network
+    ports:
+      - 443:443
+```
+
+The [docker-compose](https://docs.docker.com/compose/reference/up/) up command uses Dockerfile to build Docker container with Nginx image.
+
+`$ docker-compose up --build` 
 
 ### References
 
