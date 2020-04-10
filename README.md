@@ -97,7 +97,7 @@ Create an Apache configuration file for Reverse Proxy.
 
 `$ sudo vi /etc/apache2/sites-available/000-default.conf`
 
-ProxyPassReverse directive is required to ensure that headers are modified to point to the reverse proxy instead of Hyperledger Sawtooth's REST API.
+ProxyPassReverse directive is required to make sure that headers are modified to point to the reverse proxy instead of the URL from Hyperledger Sawtooth's REST API.
 
 Add the following contents to 000-default.conf file.
 
@@ -218,7 +218,7 @@ Configure Apache and Virtual Hosts in /usr/local/apache2/conf/httpd.conf file.
 		AllowOverride None
 		AuthType Basic
 		AuthName "Enter password"
-        AuthUserFile "/usr/local/apache2/conf/htpassword"
+        	AuthUserFile "/usr/local/apache2/conf/htpassword"
 		Require user sawtooth
 		Require all denied
 		ProxyPass http://rest-api:8008/blocks
@@ -234,13 +234,26 @@ If Docker version is earlier than 3.0, then Docker container's IP address is ass
 
 Docker inspect provides detailed information on IP addresses of all Docker Containers.
 
-` $ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)`
+`$ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)`
+
+The mod_proxy and mod_proxy_http modules implement reverse proxy (also known as gateway) mode.
+
+Configure Apache to load [mod_proxy](https://httpd.apache.org/docs/2.4/mod/mod_proxy.html) and mod_proxy_http modules in httpd.conf file.
+
+```
+LoadModule proxy_module modules/mod_proxy.so
+LoadModule proxy_http_module modules/mod_proxy_http.so
+```
+
+Use ProxyPass and ProxyPassReverse directives to pass the connection to Hyperledger Sawtooth's REST API.
+
+The hostname is assigned for ProxyPass and ProxyPassReverse directives from Hyperledger Sawtooth's REST API in the docker-compose.yaml file.
 
 Docker downloads Apache httpd image as part of the build. 
 
-Start Docker container by [Docker Compose](https://docs.docker.com/compose/) command.
+[Docker Compose](https://docs.docker.com/compose/) command with options flags attaches Docker containers for the services defined by docker-compose.yaml file.
 
-`$ docker-compose up -d`
+`$ docker-compose up --build --detach`
 
 ### Dockerized Nginx (Optional)
 
