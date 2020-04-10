@@ -4,17 +4,17 @@
 
 ### Overview
 
-Using a Reverse Proxy Hyperledger Sawtooth supports Authorization and allows Cross-Origin Resource Sharing (CORS) to access from a different domain to Hyperledger Sawtooth's REST API.
+Hyperledger Sawtooth supports authorization and allows Cross-Origin Resource Sharing (CORS) to access from a different network domain to Hyperledger Sawtooth's REST API by using a reverse proxy.
 
 The role of firewall is to filter and limit access to Hyperledger Sawtooth's REST API.
 
-Docker is an easy way to get Hyperledger Sawtooth up and running REST API. Instead of forwarding the requests directly to the Docker container, the Reverse Proxy is listening for incoming HTTPS requests and forward them to Hyperledger Sawtooth's REST API.
+Docker is an easy way to get Hyperledger Sawtooth up and running REST API. Instead of forwarding the requests directly to the Docker container, the reverse proxy is listening for incoming HTTPS requests and forward them to Hyperledger Sawtooth's REST API.
 
 Each Docker network is associated with a bridge interface on the Ubuntu host and Linux Firewall rules are defined to filter or deny traffic between these interfaces.
 
 By default, the Docker daemon listens for connections on a socket to accept HTTP requests sent from Hyperledger Sawtooths' clients to [Hyperledger Sawtooth's REST API](https://sawtooth.hyperledger.org/docs/core/releases/latest/rest_api/endpoint_specs.html) endpoint.
 
-The Reverse Proxy receives HTTP requests from a Sawtooth client and forwards HTTP requests to Hyperledger Sawtooth's REST API. 
+The reverse proxy receives HTTP requests from a Sawtooth client and forwards HTTP requests to Hyperledger Sawtooth's REST API. 
 
 The following are major steps how to install, configure, and run either Apache or Nginx as Reverse Proxy and Linux Firewall to control access to Hyperledger Sawtooth's REST API.
 
@@ -46,7 +46,7 @@ Hyperledger Sawtooth's blockchain REST API will be available at http://localhost
 
 *Step 3. Reverse Proxy*
 
-The Reverse Proxy provides a single point of Authentication and it handles incoming HTTPS connections, decrypting the requests and passing unencrypted HTTP requests on to Hyperledger Sawtooth's REST API.
+The reverse proxy provides a single point of authentication and it handles incoming HTTPS connections, decrypting the HTTPS requests and passing unencrypted HTTP requests on to Hyperledger Sawtooth's REST API.
 
 Install [Apache](https://httpd.apache.org/docs/2.4/) and enable the required modules. 
 
