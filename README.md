@@ -251,7 +251,7 @@ The hostname is assigned for ProxyPass and ProxyPassReverse directives from Hype
 
 Docker downloads Apache httpd image as part of the build. 
 
-[Docker Compose](https://docs.docker.com/compose/) command with options flags attaches Docker containers for the services defined by docker-compose.yaml file.
+The [Docker Compose](https://docs.docker.com/compose/) command with options flags attaches Docker containers for the services defined by docker-compose.yaml file.
 
 `$ docker-compose up --build --detach`
 
